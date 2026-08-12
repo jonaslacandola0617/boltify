@@ -1,32 +1,34 @@
-<article class="group hardware-panel flex h-full flex-col overflow-hidden rounded-2xl border border-zinc-200 bg-white">
-    <a href="{{ route('product.show',$product) }}" class="relative block aspect-[4/3] overflow-hidden border-b border-zinc-100 bg-stone-100">
-        <x-product-media :product="$product" class="transition duration-500 group-hover:scale-[1.025]" />
-        <span class="absolute left-3 top-3 rounded-md border border-white/70 bg-white/90 px-2 py-1 font-mono text-[8px] font-semibold uppercase tracking-[0.14em] text-zinc-600 shadow-sm backdrop-blur">{{ $product->category?->name ?? 'Hardware' }}</span>
+<article class="group flex h-full flex-col">
+    <a href="{{ route('product.show',$product) }}" class="relative block aspect-[5/4] overflow-hidden bg-[#e9e6df]">
+        <x-product-media :product="$product" class="transition duration-700 ease-out group-hover:scale-[1.035]" />
+        <span class="absolute left-0 top-0 bg-[#f4f2ed]/92 px-2.5 py-1.5 font-mono text-[8px] font-semibold uppercase tracking-[0.16em] text-zinc-600 backdrop-blur-sm">{{ $product->category?->name ?? 'Hardware' }}</span>
+        @if($product->stock < 1)
+            <span class="absolute bottom-0 right-0 bg-zinc-950 px-2.5 py-1.5 font-mono text-[8px] font-semibold uppercase tracking-[0.16em] text-white">Out of stock</span>
+        @endif
     </a>
 
-    <div class="flex flex-1 flex-col p-4">
-        <a href="{{ route('product.show',$product) }}" class="line-clamp-2 text-[15px] font-extrabold leading-snug tracking-[-0.025em] text-zinc-900 group-hover:text-orange-600">{{ $product->name }}</a>
+    <div class="flex flex-1 flex-col border-t border-zinc-300/70 pt-4">
+        <div class="flex items-start justify-between gap-4">
+            <a href="{{ route('product.show',$product) }}" class="max-w-[80%] text-[15px] font-bold leading-snug tracking-[-0.035em] text-zinc-950 group-hover:text-orange-600">{{ $product->name }}</a>
+            <span class="shrink-0 text-sm font-extrabold tracking-[-0.03em] text-zinc-950">₱{{ number_format($product->price,2) }}</span>
+        </div>
         <p class="mt-2 line-clamp-2 text-xs leading-5 text-zinc-500">{{ $product->description }}</p>
 
-        <div class="mt-auto pt-5">
-            <div class="mb-3 flex items-end justify-between gap-3">
-                <div>
-                    <p class="font-mono text-[8px] font-semibold uppercase tracking-[0.14em] text-zinc-400">Unit price</p>
-                    <p class="mt-0.5 text-lg font-extrabold tracking-[-0.035em] text-zinc-950">₱{{ number_format($product->price,2) }}</p>
-                </div>
+        <div class="mt-auto flex items-end justify-between gap-4 pt-5">
+            <div class="font-mono text-[8px] font-semibold uppercase tracking-[0.16em]">
                 @if($product->stock > 5)
-                    <span class="flex items-center gap-1.5 text-[10px] font-bold text-emerald-700"><span class="h-1.5 w-1.5 rounded-full bg-emerald-500"></span>{{ $product->stock }} in stock</span>
+                    <span class="text-emerald-700">{{ $product->stock }} available</span>
                 @elseif($product->stock > 0)
-                    <span class="flex items-center gap-1.5 text-[10px] font-bold text-amber-700"><span class="h-1.5 w-1.5 rounded-full bg-amber-500"></span>{{ $product->stock }} left</span>
+                    <span class="text-amber-700">Only {{ $product->stock }} left</span>
                 @else
-                    <span class="flex items-center gap-1.5 text-[10px] font-bold text-red-600"><span class="h-1.5 w-1.5 rounded-full bg-red-500"></span>Out of stock</span>
+                    <span class="text-red-600">Unavailable</span>
                 @endif
             </div>
 
-            <button wire:click="store" wire:loading.attr="disabled" @disabled($product->stock<1) class="flex w-full items-center justify-center gap-2 rounded-xl bg-zinc-950 px-3 py-2.5 text-xs font-extrabold text-white hover:bg-orange-500 hover:text-zinc-950 disabled:cursor-not-allowed disabled:bg-zinc-200 disabled:text-zinc-400">
+            <button wire:click="store" wire:loading.attr="disabled" @disabled($product->stock<1) class="group/button inline-flex items-center gap-2 border-b border-zinc-950 pb-1 text-xs font-extrabold text-zinc-950 hover:border-orange-600 hover:text-orange-600 disabled:border-zinc-300 disabled:text-zinc-400">
                 <span wire:loading.remove>Add to cart</span>
                 <span wire:loading>Adding…</span>
-                <i data-feather="plus" class="h-3.5 w-3.5" wire:loading.remove></i>
+                <span wire:loading.remove aria-hidden="true" class="transition-transform duration-200 group-hover/button:translate-x-1">→</span>
             </button>
         </div>
     </div>
