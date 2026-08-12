@@ -1,29 +1,29 @@
 <h1 align="center">Boltify</h1>
 
-Boltify is a Laravel e-commerce application for hardware tools and supplies. It combines a customer-facing storefront with a role-protected administration workspace for catalog, inventory, order, refund, category, and customer management.
+Boltify is a Laravel e-commerce application that digitizes the everyday hardware-store experience. It combines a clean customer storefront with a role-protected operations workspace for catalog, inventory, order, refund, category, and customer management.
 
 ## What Boltify includes
 
-- **Responsive storefront** with product search, category and price filters, sorting, pagination, product details, and related products.
-- **Customer accounts** powered by Laravel Breeze, including profile and order history.
+- **Commercial hardware storefront** with product search, department and price filters, sorting, pagination, product details, related products, and intentional no-photo catalog artwork.
+- **Customer accounts** with profile management and order history.
 - **Shopping cart** powered by Livewire with live quantities, inventory-aware limits, and order totals.
 - **Stripe Checkout** for card payments, Philippine shipping addresses, payment-session verification, and refunds.
 - **Inventory-aware orders** that deduct stock after a verified payment and return stock after a successful refund.
-- **Admin workspace** for dashboard metrics, products, categories, orders, refunds, and customers.
-- **Admin authorization** through an `is_admin` role flag and middleware. On a fresh installation, the first registered account becomes the initial administrator.
+- **Admin workspace** for dashboard metrics, six-month revenue, products, categories, orders, refunds, customers, and low-stock monitoring.
+- **Admin authorization** through an `is_admin` role flag and middleware.
+- **Demo seed data** covering users, categories, products, carts, order history, order lines, stock states, and dashboard activity.
 
 ## Stack
 
-- PHP 8.2+
-- Laravel 11
+- PHP 8.5
+- Laravel 13
 - Blade
-- Livewire 3
+- Livewire 4
 - Tailwind CSS 3
 - Alpine.js
 - Vite
 - MySQL
 - Stripe PHP SDK
-- Laravel Breeze
 
 ## Local setup
 
@@ -43,11 +43,18 @@ Boltify is a Laravel e-commerce application for hardware tools and supplies. It 
 
 3. Configure MySQL and Stripe credentials in `.env`.
 
-4. Prepare the database and public storage link.
+4. Prepare the database, seed the demo store, and create the public storage link.
 
    ```sh
    php artisan migrate
+   php artisan db:seed
    php artisan storage:link
+   ```
+
+   For a disposable local database you can rebuild everything in one command:
+
+   ```sh
+   php artisan migrate:fresh --seed
    ```
 
 5. Start development services.
@@ -56,16 +63,35 @@ Boltify is a Laravel e-commerce application for hardware tools and supplies. It 
    composer run dev
    ```
 
-6. Register the first account. On a new database, that account becomes the initial administrator and can open `/admin`.
+6. Open the storefront at `http://127.0.0.1:8000` or the administration workspace at `/admin`.
+
+## Demo accounts
+
+The seeders create verified accounts so the complete store can be explored without registering first.
+
+| Role | Email | Password |
+| --- | --- | --- |
+| Administrator | `admin@boltify.test` | `password` |
+| Customer | `customer@boltify.test` | `password` |
+
+Additional seeded customer accounts are included to populate purchasing history and admin customer metrics.
+
+> The demo credentials are development data only. Do not seed them into a real production store.
 
 ## Administration
 
-The admin area provides an overview dashboard, product and category management, inventory status, order search and filtering, Stripe refunds, and customer purchasing information. Customer accounts cannot access admin routes.
+The admin area provides an operations dashboard, product and category management, inventory status, order search and filtering, Stripe refunds, and customer purchasing information. Customer accounts cannot access admin routes.
 
-## Existing installations
+Products may be created without photographs. When no image is available, Boltify uses its technical catalog artwork instead of rendering an empty product card; uploaded product photos automatically replace the fallback artwork.
 
-Running the new migrations adds the admin role flag, order inventory tracking, and historical unit-price snapshots. The oldest existing account is promoted to administrator so an upgraded single-store installation keeps access to the management area.
+## Database notes
+
+The schema uses UUID model keys and composite primary keys for the cart and order junction tables. This keeps fresh installs compatible with managed MySQL services that enforce primary keys on every table, including services such as Aiven.
+
+## Validation
+
+The branch CI validates PHP dependencies, dependency security, fresh migrations with the full demo seed, Blade compilation, Laravel tests, and the production Vite build on PHP 8.5.
 
 ## Screenshots
 
-The `screenshots/` directory contains images from the original Boltify build. Some images may not represent the expanded admin workspace and updated responsive layouts.
+The `screenshots/` directory contains images from the original Boltify build. Some images may not represent the expanded admin workspace and current storefront design.
