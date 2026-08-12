@@ -3,22 +3,12 @@
 @tailwind utilities;
 
 @layer base {
+    html { scroll-behavior: smooth; }
+    body { @apply text-zinc-800; }
     input[type="number"]::-webkit-inner-spin-button,
-    input[type="number"]::-webkit-outer-spin-button {
-        -webkit-appearance: none;
-        margin: 0;
-    }
-
-    * {
-        @apply text-zinc-800 transition-all duration-300;
-    }
-
-    i {
-        @apply stroke-zinc-800;
-    }
+    input[type="number"]::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
+    button, a, input, select, textarea { @apply transition-colors duration-200; }
 }
 
-.swiper,
-.swiper-container {
-    margin: 0 !important;
-}
+[x-cloak] { display: none !important; }
+.swiper, .swiper-container { margin: 0 !important; }

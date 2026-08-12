@@ -3,19 +3,20 @@
 namespace App\Livewire;
 
 use App\Models\Cart;
+use App\Models\Product;
 use Illuminate\Support\Facades\Auth;
 use Livewire\Component;
 
-class ProductCard extends Component
+class ProductDetail extends Component
 {
-    public $product;
+    public Product $product;
     public int $quantity = 1;
 
-    public function mount($product): void { $this->product = $product; }
-    public function render() { return view('livewire.product-card'); }
-    public function open() { return $this->redirect(route('product.show', $this->product->id), navigate: false); }
+    public function mount(Product $product): void { $this->product = $product; }
+    public function increment(): void { $this->product->refresh(); $this->quantity = min($this->quantity + 1, max($this->product->stock, 1)); }
+    public function decrement(): void { $this->quantity = max(1, $this->quantity - 1); }
 
-    public function store()
+    public function addToCart()
     {
         if (! Auth::check()) return $this->redirect(route('login'), navigate: false);
         $this->product->refresh();
@@ -31,4 +32,6 @@ class ProductCard extends Component
 
         $this->dispatch('cart/updated');
     }
+
+    public function render() { return view('livewire.product-detail'); }
 }

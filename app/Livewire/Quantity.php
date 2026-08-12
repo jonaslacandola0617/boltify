@@ -2,45 +2,40 @@
 
 namespace App\Livewire;
 
-use App\Http\Controllers\CartController;
+use App\Models\Product;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Log;
 use Livewire\Component;
 
 class Quantity extends Component
-{   
-    public $quantity = 0, $product;
+{
+    public int $quantity = 1;
+    public string $product;
 
-    public function mount($quantity, $product)
-    {   
-        $this->quantity = $quantity;
-        $this->product = $product;
-    }
+    public function mount($quantity, $product): void { $this->quantity = max(1, (int) $quantity); $this->product = (string) $product; }
 
-    public function increment() {
-        $cart = new CartController();
-    
-        $this->quantity += 1;
-        
-        $cart->updateQuantity($this->quantity, $this->product);
-
-        $this->dispatch('quantity/changed');
-    }
-
-    public function decrement() {
-        if ($this->quantity == 1) {
-            return;
-        }
-
-        $cart = new CartController();
-        $this->quantity -= 1;
-        $cart->updateQuantity($this->quantity, $this->product);
-
-        $this->dispatch('quantity/changed');
-    }
-
-    public function render()
+    public function increment(): void
     {
-        return view('livewire.quantity');
+        $product = Product::findOrFail($this->product);
+        if ($this->quantity >= $product->stock) return;
+        $this->quantity++;
+        $this->sync();
+    }
+
+    public function decrement(): void
+    {
+        if ($this->quantity <= 1) return;
+        $this->quantity--;
+        $this->sync();
+    }
+
+    public function render() { return view('livewire.quantity'); }
+
+    private function sync(): void
+    {
+        $cart = Auth::user()?->cart;
+        abort_unless($cart, 404);
+        $cart->products()->updateExistingPivot($this->product, ['quantity' => $this->quantity]);
+        $this->dispatch('quantity/changed');
+        $this->dispatch('cart/updated');
     }
 }

@@ -9,15 +9,12 @@ class Cart extends Model
 {
     use HasUuids;
 
-    protected $fillable = [
-        'userId'
-    ];
+    protected $fillable = ['userId'];
 
-    public function user() {
-        return $this->belongsTo(User::class);
-    }
+    public function user() { return $this->belongsTo(User::class, 'userId'); }
 
-    public function products() {
+    public function products()
+    {
         return $this->belongsToMany(Product::class, 'cart_product', 'cartId', 'productId')->withPivot('quantity');
     }
 }

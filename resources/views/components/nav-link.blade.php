@@ -1,11 +1,1 @@
-@props(['active'])
-
-@php
-$classes = ($active ?? false)
-            ? 'flex items-center gap-2 px-4 py-3 bg-orange-100 text-orange-500 rounded-lg'
-            : 'flex items-center gap-2 px-4 py-3 text-zinc-500 rounded-lg';
-@endphp
-
-<a {{ $attributes->merge(['class' => $classes]) }}>
-    {{ $slot }}
-</a>
+@props(['active'=>false]) @php($classes=$active?'flex items-center gap-3 rounded-xl bg-orange-50 px-3 py-2.5 text-sm font-semibold text-orange-700':'flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium text-zinc-500 hover:bg-zinc-100 hover:text-zinc-900')<a {{ $attributes->merge(['class'=>$classes]) }}>{{ $slot }}</a>

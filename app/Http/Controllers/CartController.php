@@ -3,48 +3,48 @@
 namespace App\Http\Controllers;
 
 use App\Models\Cart;
+use App\Models\Product;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Log;
 
 class CartController extends Controller
 {
-    /**
-     * Store a newly created resource in storage.
-     */
     public function store(Request $request)
     {
-        
-
-        return;
+        return redirect()->route('feed');
     }
 
-    /**
-     * Display the specified resource.
-     */
     public function show(Cart $cart)
-    {   
-        Log::info($cart);
-        $products = $cart->products;
+    {
+        abort_unless($cart->userId === Auth::id(), 403);
+
+        $products = $cart->products()->with('category')->get();
 
         return view('cart', compact('products'));
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
     public function update(Request $request, Cart $cart)
     {
-        $cart->products()->detach($request->productId);
+        abort_unless($cart->userId === Auth::id(), 403);
 
-        return back();
+        $validated = $request->validate([
+            'productId' => ['required', 'uuid', 'exists:products,id'],
+        ]);
+
+        $cart->products()->detach($validated['productId']);
+
+        return back()->with('success', 'Item removed from your cart.');
     }
 
-    public function updateQuantity($quantity, $product) {
-        $cart = Auth::user()->cart;
+    public function updateQuantity(int $quantity, string $productId): void
+    {
+        $cart = Auth::user()?->cart;
+        $product = Product::findOrFail($productId);
 
-        $cart->products()->updateExistingPivot($product, ['quantity' => $quantity]);
+        abort_unless($cart, 404);
 
-        return;
+        $quantity = max(1, min($quantity, $product->stock));
+
+        $cart->products()->updateExistingPivot($productId, ['quantity' => $quantity]);
     }
 }

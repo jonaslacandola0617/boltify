@@ -1,57 +1,12 @@
 <x-admin-layout>
-    <div class="grid grid-cols-4 gap-4">
-        <div class="border border-zinc-400 rounded-lg p-8 flex flex-col gap-2 justify-center items-center">
-            <i data-feather="users" class="stroke-sky-500"></i>
-            <p class="text-lg text-zinc-600">{{ $users }} Users</p>
-        </div>
-        <div class="border border-zinc-400 rounded-lg p-8 flex flex-col gap-2 justify-center items-center">
-            <i data-feather="shopping-bag" class="stroke-orange-500"></i>
-            <p class="text-lg text-zinc-600">{{ $products }} Products</p>
-        </div>
-        <div class="border border-zinc-400 rounded-lg p-8 flex flex-col gap-2 justify-center items-center">
-            <i data-feather="trending-up" class="stroke-lime-500"></i>
-            <p class="text-zinc-500">{{ $sales }} Sales</p>
-            <p class="text-lg text-zinc-600">&#8369; {{ number_format($revenue, 2, '.', ',') }} Revenue</p>
-        </div>
-        <div class="border border-zinc-400 rounded-lg p-8 flex flex-col gap-2 justify-center items-center">
-            <i data-feather="trending-down" class="stroke-red-500"></i>
-            <p class="text-zinc-500">{{ $refunds }} Refunds</p>
-            <p class="text-lg text-zinc-600">&#8369; {{ number_format($sales_return, 2, '.', ',') }} Return</p>
-        </div>
-    </div>
-
-    <div class="w-full h-full max-w-[75%] mx-auto">
-        <canvas id="myChart"></canvas>
-    </div>
-
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script>
-        const ctx = document.getElementById('myChart');
-        const revenuePerCategory = @json($revenuePerCategory);
-
-        const colors = [
-            '#ef4444', '#3b82f6', '#22c55e', '#eab308', '#a855f7', '#ec4899', '#6366f1'
-         ];
-
-        new Chart(ctx, {
-            type: 'bar',
-            data: {
-            labels: Object.keys(revenuePerCategory),
-            datasets: [{
-                label: 'Sales per Categories',
-                data: Object.values(revenuePerCategory),
-                backgroundColor: colors,
-                borderWidth: 1
-            }]
-            },
-            options: {
-            scales: {
-                y: {
-                beginAtZero: true
-                }
-            }
-            }
-        });
-        </script>
-
+<div class="flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between"><div><p class="text-sm font-medium text-orange-600">Store command center</p><h1 class="text-3xl font-semibold">Overview</h1><p class="text-sm text-zinc-500">Sales, customers, and inventory at a glance.</p></div><a href="{{ route('admin.product.index') }}" class="rounded-xl bg-orange-500 px-4 py-2.5 text-sm font-semibold text-white">Manage products</a></div>
+<div class="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+@foreach([['Revenue','₱'.number_format($stats['revenue'],2),'trending-up'],['Products',number_format($stats['products']),'package'],['Customers',number_format($stats['customers']),'users'],['Refunded','₱'.number_format($stats['refund_total'],2),'rotate-ccw']] as $card)
+<div class="rounded-2xl border bg-white p-5 shadow-sm"><div class="flex justify-between"><div><p class="text-sm text-zinc-500">{{ $card[0] }}</p><p class="mt-2 text-2xl font-semibold">{{ $card[1] }}</p></div><span class="rounded-xl bg-orange-50 p-2"><i data-feather="{{ $card[2] }}" class="h-5 w-5 stroke-orange-600"></i></span></div></div>
+@endforeach
+</div>
+<div class="grid gap-6 xl:grid-cols-[1.4fr_1fr]">
+<section class="rounded-2xl border bg-white p-5 shadow-sm"><div class="mb-4 flex justify-between"><div><h2 class="font-semibold">Recent orders</h2><p class="text-xs text-zinc-500">Latest customer activity</p></div><a class="text-sm font-medium text-orange-600" href="{{ route('admin.orders.index') }}">View all</a></div><div class="divide-y">@forelse($recentOrders as $order)<a href="{{ route('admin.orders.show',$order) }}" class="grid gap-2 py-3 sm:grid-cols-[1fr_auto_auto] sm:items-center"><div><p class="text-sm font-medium">{{ $order->name }}</p><p class="text-xs text-zinc-500">#{{ Str::limit($order->id,8,'') }} · {{ $order->created_at->format('M d, Y') }}</p></div><span class="text-xs uppercase text-zinc-500">{{ $order->status }}</span><strong class="text-sm">₱{{ number_format($order->total/100,2) }}</strong></a>@empty<p class="py-8 text-center text-sm text-zinc-400">No orders yet.</p>@endforelse</div></section>
+<section class="rounded-2xl border bg-white p-5 shadow-sm"><div class="mb-4"><h2 class="font-semibold">Inventory attention</h2><p class="text-xs text-zinc-500">Products with 5 or fewer units</p></div><div class="divide-y">@forelse($lowStockProducts as $product)<a href="{{ route('admin.product.edit',$product) }}" class="flex items-center justify-between py-3"><div><p class="text-sm font-medium">{{ $product->name }}</p><p class="text-xs text-zinc-500">{{ $product->category?->name }}</p></div><span class="rounded-full bg-amber-50 px-2 py-1 text-xs font-semibold text-amber-700">{{ $product->stock }} left</span></a>@empty<p class="py-8 text-center text-sm text-zinc-400">Inventory looks healthy.</p>@endforelse</div></section>
+</div>
 </x-admin-layout>

@@ -1,3 +1,1 @@
-<x-app-layout>
-
-</x-app-layout>
+<x-app-layout><livewire:product-detail :product="$product"/><section class="mt-6"><div class="mb-4"><p class="text-sm font-medium text-orange-600">More to explore</p><h2 class="text-2xl font-semibold">Related products</h2></div><div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">@forelse($relatedProducts as $related)<livewire:product-card :product="$related" :key="$related->id"/>@empty<p class="col-span-full text-sm text-zinc-400">No related products yet.</p>@endforelse</div></section></x-app-layout>
