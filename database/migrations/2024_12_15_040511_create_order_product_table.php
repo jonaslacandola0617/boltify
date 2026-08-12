@@ -13,7 +13,7 @@ return new class extends Migration
             $table->foreignUuid('productId')->constrained('products')->cascadeOnDelete();
             $table->integer('quantity');
             $table->decimal('unit_price', 10, 2)->nullable();
-            $table->unique(['orderId', 'productId']);
+            $table->primary(['orderId', 'productId']);
         });
     }
 
