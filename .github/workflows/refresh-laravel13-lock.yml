@@ -1,4 +1,4 @@
-name: Validate Laravel 13 Upgrade
+name: Boltify CI
 
 on:
   push:
@@ -7,13 +7,23 @@ on:
     paths:
       - composer.json
       - composer.lock
+      - package.json
+      - package-lock.json
+      - app/**
+      - database/**
+      - resources/**
+      - routes/**
+      - tailwind.config.js
       - .github/workflows/refresh-laravel13-lock.yml
+  pull_request:
+    branches:
+      - main
 
 permissions:
-  contents: write
+  contents: read
 
 jobs:
-  upgrade:
+  validate:
     runs-on: ubuntu-latest
     env:
       APP_ENV: testing
@@ -27,8 +37,6 @@ jobs:
     steps:
       - name: Checkout branch
         uses: actions/checkout@v4
-        with:
-          ref: agent/finish-boltify-admin
 
       - name: Set up PHP 8.5
         uses: shivammathur/setup-php@v2
@@ -38,8 +46,8 @@ jobs:
           coverage: none
           tools: composer:v2
 
-      - name: Resolve Laravel 13 dependencies
-        run: composer update --with-all-dependencies --no-interaction --prefer-dist
+      - name: Install PHP dependencies
+        run: composer install --no-interaction --prefer-dist --no-progress
 
       - name: Audit PHP dependencies
         run: composer audit
@@ -51,6 +59,12 @@ jobs:
           php artisan optimize:clear
           php artisan --version
 
+      - name: Validate migrations and demo seeders
+        run: php artisan migrate:fresh --seed --force
+
+      - name: Compile Blade views
+        run: php artisan view:cache
+
       - name: Run Laravel tests
         run: php artisan test
 
@@ -59,13 +73,3 @@ jobs:
 
       - name: Build frontend
         run: npm run build
-
-      - name: Commit refreshed lockfile
-        run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add composer.lock
-          if ! git diff --cached --quiet; then
-            git commit -m "refresh Composer lock for Laravel 13"
-            git push origin HEAD:agent/finish-boltify-admin
-          fi
