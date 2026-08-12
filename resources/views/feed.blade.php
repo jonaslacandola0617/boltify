@@ -1,69 +1,68 @@
-<x-app-layout>
-    <section class="hardware-panel overflow-hidden rounded-[1.75rem] border border-zinc-800 bg-zinc-950 text-white">
-        <div class="grid lg:grid-cols-[1.35fr_.65fr]">
-            <div class="relative overflow-hidden px-6 py-10 sm:px-10 sm:py-14 lg:px-12 lg:py-16">
-                <div class="hardware-grid absolute inset-0 opacity-[0.08]"></div>
-                <div class="relative max-w-3xl">
-                    <div class="flex items-center gap-3">
-                        <span class="h-px w-8 bg-orange-500"></span>
-                        <span class="font-mono text-[10px] font-semibold uppercase tracking-[0.2em] text-orange-400">Boltify Hardware Supply</span>
-                    </div>
-                    <h1 class="mt-6 max-w-3xl text-4xl font-extrabold leading-[1.04] tracking-[-0.055em] sm:text-5xl lg:text-6xl">The hardware store,<br class="hidden sm:block"> built for the screen.</h1>
-                    <p class="mt-5 max-w-2xl text-sm leading-7 text-zinc-400 sm:text-base">A focused catalog of tools, fasteners, building supplies, electrical, plumbing, finishing, and jobsite essentials—organized the way real work gets done.</p>
-                    <div class="mt-8 flex flex-wrap gap-3">
-                        <a href="#catalog" class="rounded-xl bg-orange-500 px-5 py-3 text-sm font-extrabold text-zinc-950 hover:bg-orange-400">Browse the catalog</a>
-                        @if($categories->firstWhere('name', 'Safety & PPE'))
-                            <a href="{{ route('feed', ['categories' => [$categories->firstWhere('name', 'Safety & PPE')->id]]) }}" class="rounded-xl border border-zinc-700 px-5 py-3 text-sm font-semibold text-zinc-200 hover:border-zinc-500 hover:bg-zinc-900">Shop safety gear</a>
-                        @endif
-                    </div>
+<x-app-layout
+    :title="$search ? 'Search: '.$search.' — Boltify Hardware' : 'Boltify — Tools, Hardware & Jobsite Essentials'"
+    description="Shop tools, hardware supplies, fasteners, electrical, plumbing, safety gear, finishing materials, and jobsite essentials from Boltify."
+    :canonical="route('feed')"
+    :noindex="request()->query() !== []"
+>
+    <section class="relative border-b border-zinc-300/80 pb-12 lg:pb-16">
+        <div class="grid gap-12 lg:grid-cols-[1.45fr_.55fr] lg:items-end">
+            <div>
+                <div class="flex items-center gap-3 font-mono text-[10px] font-semibold uppercase tracking-[0.22em] text-zinc-500">
+                    <span class="inline-block h-2 w-2 bg-orange-500"></span>
+                    Boltify Hardware Supply
                 </div>
+                <h1 class="mt-7 max-w-5xl text-[clamp(3.5rem,8vw,8rem)] font-extrabold leading-[0.86] tracking-[-0.075em] text-zinc-950">
+                    Hardware,<br>
+                    <span class="text-orange-600">without the clutter.</span>
+                </h1>
+                <p class="mt-8 max-w-2xl text-base leading-8 text-zinc-600 sm:text-lg">A modern trade counter for dependable tools, repair essentials, building supplies, and the small things that keep a job moving.</p>
             </div>
 
-            <div class="relative min-h-[280px] overflow-hidden bg-orange-500 p-6 text-zinc-950 sm:p-8 lg:p-10">
-                <div class="absolute -bottom-20 -right-16 h-64 w-64 rounded-full border-[42px] border-zinc-950/10"></div>
-                <div class="relative flex h-full flex-col justify-between gap-10">
-                    <div class="flex items-start justify-between gap-6">
-                        <span class="font-mono text-[10px] font-bold uppercase tracking-[0.2em]">Trade counter / 01</span>
-                        <svg viewBox="0 0 48 48" class="h-12 w-12 fill-none stroke-zinc-950" aria-hidden="true">
-                            <path d="M16 8h16l8 16-8 16H16L8 24 16 8Z" stroke-width="2"/>
-                            <circle cx="24" cy="24" r="6" stroke-width="2"/>
-                        </svg>
-                    </div>
-                    <div class="space-y-1">
-                        <p class="text-3xl font-extrabold tracking-[-0.05em]">{{ $categories->count() }} departments</p>
-                        <p class="text-sm font-medium text-zinc-900/70">From the tool bench to finishing work.</p>
-                    </div>
-                    <div class="grid grid-cols-2 border-t border-zinc-950/20 pt-5 text-xs font-bold">
-                        <div><span class="block font-mono text-[9px] uppercase tracking-widest text-zinc-950/50">Inventory</span><span class="mt-1 block">Stock-aware</span></div>
-                        <div><span class="block font-mono text-[9px] uppercase tracking-widest text-zinc-950/50">Catalog</span><span class="mt-1 block">Search & filter</span></div>
-                    </div>
+            <div class="grid grid-cols-2 gap-x-8 gap-y-8 border-t border-zinc-300/80 pt-6 lg:border-t-0 lg:pt-0">
+                <div>
+                    <p class="font-mono text-[9px] font-semibold uppercase tracking-[0.18em] text-zinc-500">Departments</p>
+                    <p class="mt-2 text-3xl font-extrabold tracking-[-0.05em]">{{ $categories->count() }}</p>
+                </div>
+                <div>
+                    <p class="font-mono text-[9px] font-semibold uppercase tracking-[0.18em] text-zinc-500">Catalog</p>
+                    <p class="mt-2 text-3xl font-extrabold tracking-[-0.05em]">{{ $products->total() }}</p>
+                </div>
+                <div class="col-span-2 border-t border-zinc-300/80 pt-5">
+                    <p class="text-sm leading-6 text-zinc-600">Stock-aware shopping, practical categories, and straightforward pricing. Designed around the way a real hardware counter works.</p>
+                    <a href="#catalog" class="mt-5 inline-flex items-center gap-2 text-sm font-bold text-zinc-950 hover:text-orange-600">Browse inventory <span aria-hidden="true">↓</span></a>
                 </div>
             </div>
         </div>
     </section>
 
-    <section class="-mt-2 overflow-x-auto pb-1">
-        <div class="flex min-w-max gap-2">
-            <a href="{{ route('feed') }}" class="rounded-lg border border-zinc-900 bg-zinc-950 px-3.5 py-2 text-xs font-bold text-white">All departments</a>
+    <section id="departments" class="border-b border-zinc-300/80 py-8">
+        <div class="mb-5 flex items-baseline justify-between gap-6">
+            <p class="font-mono text-[10px] font-semibold uppercase tracking-[0.2em] text-zinc-500">Shop by department</p>
+            <a href="{{ route('feed') }}" class="text-xs font-semibold text-zinc-500 hover:text-orange-600">View everything</a>
+        </div>
+        <div class="flex flex-wrap gap-x-7 gap-y-3">
             @foreach($categories as $category)
-                <a href="{{ route('feed', ['categories' => [$category->id]]) }}" class="rounded-lg border border-zinc-200 bg-white px-3.5 py-2 text-xs font-semibold text-zinc-600 shadow-sm hover:border-zinc-400 hover:text-zinc-950">{{ $category->name }}</a>
+                <a href="{{ route('feed', ['categories' => [$category->id]]) }}" class="group inline-flex items-center gap-2 text-lg font-bold tracking-[-0.03em] text-zinc-800 hover:text-orange-600">
+                    {{ $category->name }}
+                    <span class="text-sm font-normal text-zinc-300 transition-transform duration-200 group-hover:translate-x-1 group-hover:text-orange-400">↗</span>
+                </a>
             @endforeach
         </div>
     </section>
 
-    <div id="catalog" class="grid scroll-mt-28 gap-7 lg:grid-cols-[250px_1fr]">
+    <div id="catalog" class="grid scroll-mt-28 gap-10 py-10 lg:grid-cols-[220px_1fr] lg:gap-14 lg:py-14">
         <aside class="lg:sticky lg:top-28 lg:self-start">
             <x-filter :categories="$categories" :filter="$filter" :minPrice="$minPrice" :maxPrice="$maxPrice"/>
         </aside>
 
         <section class="min-w-0">
-            <div class="mb-5 flex flex-col gap-4 border-b border-zinc-200 pb-5 sm:flex-row sm:items-end sm:justify-between">
+            <div class="mb-8 flex flex-col gap-5 border-b border-zinc-300/80 pb-6 sm:flex-row sm:items-end sm:justify-between">
                 <div>
-                    <p class="font-mono text-[10px] font-semibold uppercase tracking-[0.18em] text-orange-600">Current inventory</p>
-                    <h2 class="mt-1 text-2xl font-extrabold tracking-[-0.04em]">Hardware catalog</h2>
-                    <p class="mt-1 text-sm text-zinc-500">{{ $products->total() }} item{{ $products->total() === 1 ? '' : 's' }}{{ $search ? ' matching “'.$search.'”':'' }}</p>
+                    <p class="font-mono text-[10px] font-semibold uppercase tracking-[0.2em] text-orange-600">Inventory / live catalog</p>
+                    <h2 class="mt-2 text-3xl font-extrabold tracking-[-0.055em] sm:text-4xl">Tools for the work ahead.</h2>
+                    <p class="mt-2 text-sm text-zinc-500">{{ $products->total() }} item{{ $products->total() === 1 ? '' : 's' }}{{ $search ? ' matching “'.$search.'”':'' }}</p>
                 </div>
-                <form method="get" class="flex items-center gap-2">
+                <form method="get" class="flex items-center gap-3">
                     @foreach(request()->except('sort','page') as $key=>$value)
                         @if(is_array($value))
                             @foreach($value as $v)<input type="hidden" name="{{ $key }}[]" value="{{ $v }}">@endforeach
@@ -71,8 +70,8 @@
                             <input type="hidden" name="{{ $key }}" value="{{ $value }}">
                         @endif
                     @endforeach
-                    <label class="font-mono text-[9px] font-semibold uppercase tracking-widest text-zinc-400" for="sort">Sort</label>
-                    <select id="sort" name="sort" onchange="this.form.submit()" class="rounded-xl border-zinc-200 bg-white py-2.5 text-sm font-medium shadow-sm">
+                    <label class="font-mono text-[9px] font-semibold uppercase tracking-[0.18em] text-zinc-500" for="sort">Sort</label>
+                    <select id="sort" name="sort" onchange="this.form.submit()" class="border-0 border-b border-zinc-400 bg-transparent py-2 pl-0 pr-8 text-sm font-semibold focus:border-zinc-950 focus:ring-0">
                         <option value="newest" @selected($sort==='newest')>Newest</option>
                         <option value="price_low" @selected($sort==='price_low')>Price: low to high</option>
                         <option value="price_high" @selected($sort==='price_high')>Price: high to low</option>
@@ -81,19 +80,19 @@
                 </form>
             </div>
 
-            <div class="grid gap-4 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4">
+            <div class="grid gap-x-5 gap-y-12 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4">
                 @forelse($products as $product)
                     <livewire:product-card :product="$product" :key="$product->id"/>
                 @empty
-                    <div class="col-span-full rounded-2xl border border-dashed border-zinc-300 bg-white p-12 text-center">
-                        <p class="font-semibold text-zinc-700">No hardware matched that search.</p>
-                        <p class="mt-1 text-sm text-zinc-400">Try clearing a filter or searching a broader product name.</p>
+                    <div class="col-span-full border-y border-dashed border-zinc-300 py-16 text-center">
+                        <p class="font-semibold text-zinc-800">No hardware matched that search.</p>
+                        <p class="mt-2 text-sm text-zinc-500">Try clearing a filter or searching a broader product name.</p>
                     </div>
                 @endforelse
             </div>
 
             @if($products->hasPages())
-                <div class="mt-8">{{ $products->links() }}</div>
+                <div class="mt-14 border-t border-zinc-300/80 pt-7">{{ $products->links() }}</div>
             @endif
         </section>
     </div>
