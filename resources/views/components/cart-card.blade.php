@@ -1,27 +1,33 @@
 @props(['product'])
+@php($imgs=json_decode($product->images,true)?:[])
 
-<div class="min-w-[50%] px-8 py-6 overflow-hidden flex flex-col gap-2 border border-zinc-100 rounded-xl shadow">
-    <div class="flex justify-between items-center">
-        <h1 class="text-xl font-semibold">{{ $product->name }}</h1>
-        <form action="{{ route('cart.update', ['cart' => Auth::user()->cart->id, 'productId' => $product->id]) }}" method="post">
-            @csrf
-            @method('PUT')
-            <button type="submit">
-                <i data-feather="x" class="w-4 h-4 stroke-current text-zinc-500"></i>
-            </button>
-        </form>
-    </div>
-    <div class="flex items-center gap-4">
-        <img src="{{ asset('storage/' . json_decode($product->images)[0]) }}" alt="{{ $product->name . ' ' . $product->description }}" class="aspect-square object-cover rounded-md w-24 h-24">
-        <div class="flex flex-col justify-center gap-2 w-3/4 line-clamp-2">
-            <p class="text-sm text-zinc-600 line-clamp-2">{{ $product->description }}</p>
-            <p class="self-start text-[12px] text-zinc-500 bg-zinc-200 rounded-md px-2 py-1">{{ $product->category->name }}</p>
-            <div class="flex justify-between items-center">
-                <p class="text-orange-500 font-medium">
-                    &#8369; {{ number_format($product->price, 2, '.', ',') }} 
-                </p>
-                <livewire:quantity :quantity="$product->pivot->quantity" :product="$product->id" />
+<article class="grid gap-5 py-6 sm:grid-cols-[120px_1fr] sm:gap-6">
+    <a href="{{ route('product.show', $product) }}" class="block aspect-square overflow-hidden bg-[#e7e4dd] sm:h-[120px] sm:w-[120px]">
+        <x-product-media :product="$product" compact />
+    </a>
+
+    <div class="min-w-0">
+        <div class="flex items-start justify-between gap-5">
+            <div>
+                <p class="font-mono text-[8px] font-semibold uppercase tracking-[0.18em] text-orange-600">{{ $product->category?->name ?? 'Hardware' }}</p>
+                <a href="{{ route('product.show', $product) }}" class="mt-1 block text-base font-extrabold tracking-[-0.035em] hover:text-orange-600">{{ $product->name }}</a>
             </div>
+            <form action="{{ route('cart.update',Auth::user()->cart) }}" method="post">
+                @csrf
+                @method('PUT')
+                <input type="hidden" name="productId" value="{{ $product->id }}">
+                <button class="flex h-8 w-8 items-center justify-center text-zinc-400 hover:text-red-600" aria-label="Remove {{ $product->name }} from cart"><i data-feather="x" class="h-4 w-4"></i></button>
+            </form>
+        </div>
+
+        <p class="mt-2 line-clamp-2 max-w-2xl text-xs leading-5 text-zinc-500">{{ $product->description }}</p>
+
+        <div class="mt-5 flex flex-wrap items-end justify-between gap-4">
+            <div>
+                <p class="font-mono text-[8px] font-semibold uppercase tracking-[0.16em] text-zinc-500">Unit price</p>
+                <strong class="mt-1 block text-lg tracking-[-0.035em]">₱{{ number_format($product->price,2) }}</strong>
+            </div>
+            <livewire:quantity :quantity="$product->pivot->quantity" :product="$product->id" :key="'qty-'.$product->id"/>
         </div>
     </div>
-</div>
+</article>

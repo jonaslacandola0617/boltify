@@ -1,31 +1,44 @@
 <!DOCTYPE html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
-    <head>
-        <meta charset="utf-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
-        <meta name="csrf-token" content="{{ csrf_token() }}">
+<head>
+    @php
+        $seoTitle = $title ?: 'Account — Boltify';
+        $seoDescription = $description ?: 'Sign in or create your Boltify hardware supply account.';
+    @endphp
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
+    <title>{{ $seoTitle }}</title>
+    <meta name="description" content="{{ $seoDescription }}">
+    <meta name="robots" content="noindex,follow">
+    <x-includes/>
+    @vite(['resources/css/app.css', 'resources/js/app.js'])
+</head>
+<body class="min-h-screen bg-[#f4f2ed] text-zinc-950 antialiased">
+    <header class="absolute inset-x-0 top-0 z-20">
+        <div class="mx-auto flex max-w-[1600px] items-center justify-between px-5 py-6 sm:px-8 lg:px-12 xl:px-16">
+            <a href="{{ route('feed') }}" aria-label="Boltify home"><x-application-logo class="text-2xl" /></a>
+            <a href="{{ route('feed') }}" class="inline-flex items-center gap-2 text-xs font-bold text-zinc-600 hover:text-orange-600">Back to catalog <span aria-hidden="true">↗</span></a>
+        </div>
+    </header>
 
-        <title>{{ config('app.name', 'OfferHub') }}</title>
-
-        <x-includes/>
-
-        <!-- Scripts -->
-        @vite(['resources/css/app.css', 'resources/js/app.js'])
-    </head>
-    <body class="w-full h-screen flex items-center bg-zinc-50 antialiased">
-        <div class="w-3/4 h-3/4 shadow-2xl rounded-3xl mx-auto flex flex-cols items-center gap-10 bg-background-light">
-            @isset($sideboard)
-                <div class="relative h-full w-full rounded-s-3xl bg-gradient-to-b from-orange-500 to-orange-600">
+    <main class="mx-auto grid min-h-screen max-w-[1600px] lg:grid-cols-2">
+        @isset($sideboard)
+            <aside class="relative hidden overflow-hidden border-r border-zinc-300/80 px-12 pb-14 pt-32 lg:flex xl:px-16">
+                <div class="hardware-grid absolute inset-0 opacity-40"></div>
+                <div class="relative flex w-full flex-col justify-end">
                     {{ $sideboard }}
                 </div>
-            @endisset
-            <div class="flex justify-center w-full">
+            </aside>
+        @endisset
+
+        <section class="flex min-h-screen items-center px-5 pb-16 pt-28 sm:px-8 lg:px-14 lg:py-28 xl:px-20 {{ isset($sideboard) ? '' : 'lg:col-span-2' }}">
+            <div class="mx-auto w-full max-w-xl">
                 {{ $slot }}
             </div>
-        </div>
+        </section>
+    </main>
 
-        <script>
-            feather.replace();
-        </script>
-    </body>
+    <script>document.addEventListener('DOMContentLoaded',()=>feather.replace());</script>
+</body>
 </html>

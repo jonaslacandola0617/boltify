@@ -9,7 +9,8 @@ export default {
     theme: {
         extend: {
             fontFamily: {
-                sans: ["Poppins, sans-serif"],
+                sans: ["Manrope", "ui-sans-serif", "system-ui", "sans-serif"],
+                mono: ["IBM Plex Mono", "ui-monospace", "SFMono-Regular", "monospace"],
             },
         },
     },

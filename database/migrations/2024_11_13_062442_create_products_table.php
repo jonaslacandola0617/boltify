@@ -6,14 +6,11 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    /**
-     * Run the migrations.
-     */
     public function up(): void
     {
         Schema::create('products', function (Blueprint $table) {
             $table->uuid('id')->primary();
-            $table->foreignUuid('categoryId')->constraint('categories')->onDelete('cascade');
+            $table->uuid('categoryId')->index();
             $table->string('name');
             $table->text('description');
             $table->decimal('price', 10, 2);
@@ -22,12 +19,5 @@ return new class extends Migration
             $table->timestamps();
         });
     }
-
-    /**
-     * Reverse the migrations.
-     */
-    public function down(): void
-    {
-        Schema::dropIfExists('products');
-    }
+    public function down(): void { Schema::dropIfExists('products'); }
 };

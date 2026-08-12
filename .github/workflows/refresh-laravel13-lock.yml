@@ -1,0 +1,79 @@
+name: Boltify CI
+
+on:
+  push:
+    branches:
+      - agent/finish-boltify-admin
+    paths:
+      - composer.json
+      - composer.lock
+      - package.json
+      - package-lock.json
+      - app/**
+      - database/**
+      - resources/**
+      - routes/**
+      - tailwind.config.js
+      - .github/workflows/refresh-laravel13-lock.yml
+  pull_request:
+    branches:
+      - main
+
+concurrency:
+  group: boltify-ci-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    env:
+      APP_ENV: testing
+      CACHE_STORE: array
+      SESSION_DRIVER: array
+      QUEUE_CONNECTION: sync
+      MAIL_MAILER: array
+      DB_CONNECTION: sqlite
+      DB_DATABASE: ':memory:'
+
+    steps:
+      - name: Checkout branch
+        uses: actions/checkout@v4
+
+      - name: Set up PHP 8.5
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.5'
+          extensions: mbstring, sqlite3, pdo_sqlite
+          coverage: none
+          tools: composer:v2
+
+      - name: Install PHP dependencies
+        run: composer install --no-interaction --prefer-dist --no-progress
+
+      - name: Audit PHP dependencies
+        run: composer audit
+
+      - name: Prepare application
+        run: |
+          cp .env.example .env
+          php artisan key:generate
+          php artisan optimize:clear
+          php artisan --version
+
+      - name: Validate migrations and demo seeders
+        run: php artisan migrate:fresh --seed --force
+
+      - name: Compile Blade views
+        run: php artisan view:cache
+
+      - name: Run Laravel tests
+        run: php artisan test
+
+      - name: Install frontend dependencies
+        run: npm ci
+
+      - name: Build frontend
+        run: npm run build

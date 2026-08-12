@@ -1,11 +1,5 @@
-<div class="flex items-center gap-4">
-    <button class="rounded-lg bg-zinc-200 px-2 text-xl text-zinc-600 active:bg-zinc-300 disabled:bg-opacity-50 disabled:cursor-not-allowed disabled:text-zinc-400" wire:click="decrement" @if($quantity == 1 || $quantity < 1) disabled @endif>
-        &minus;
-    </button>
-    <span class="text-sm">{{ $quantity }}</span>
-    <button class="rounded-lg bg-zinc-200 px-2 text-xl text-zinc-600 active:bg-zinc-300" wire:click="increment">
-        &plus;
-    </button>
+<div class="inline-flex items-center border-y border-zinc-400">
+    <button type="button" wire:click="decrement" @disabled($quantity<=1) class="flex h-9 w-9 items-center justify-center text-lg text-zinc-600 hover:text-orange-600 disabled:opacity-30">−</button>
+    <span class="min-w-10 border-x border-zinc-300 text-center text-sm font-semibold leading-9">{{ $quantity }}</span>
+    <button type="button" wire:click="increment" class="flex h-9 w-9 items-center justify-center text-lg text-zinc-600 hover:text-orange-600">+</button>
 </div>
-
-

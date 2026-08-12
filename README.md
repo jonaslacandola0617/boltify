@@ -1,97 +1,97 @@
 <h1 align="center">Boltify</h1>
 
-Boltify is an e-commerce platform built with Laravel, designed for hardware stores to sell products online efficiently. It provides features for product management, user authentication, order processing, and more.
+Boltify is a Laravel e-commerce application that digitizes the everyday hardware-store experience. It combines a clean customer storefront with a role-protected operations workspace for catalog, inventory, order, refund, category, and customer management.
 
-## Features
+## What Boltify includes
 
--   **Product Management**: Add, edit, and remove hardware products.
--   **User Authentication**: Secure login and registration for customers.
--   **Shopping Cart & Checkout**: Seamless shopping experience with cart functionality and secure checkout.
--   **Order Management**: Track and manage customer orders.
--   **Payment Integration**: Supports various payment methods (Stripe).
--   **Admin Dashboard**: Manage products, orders, and users with ease.
--   **Responsive Design**: Fully optimized for desktop and mobile devices.
+- **Commercial hardware storefront** with product search, department and price filters, sorting, pagination, product details, related products, and intentional no-photo catalog artwork.
+- **Customer accounts** with profile management and order history.
+- **Shopping cart** powered by Livewire with live quantities, inventory-aware limits, and order totals.
+- **Stripe Checkout** for card payments, Philippine shipping addresses, payment-session verification, and refunds.
+- **Inventory-aware orders** that deduct stock after a verified payment and return stock after a successful refund.
+- **Admin workspace** for dashboard metrics, six-month revenue, products, categories, orders, refunds, customers, and low-stock monitoring.
+- **Admin authorization** through an `is_admin` role flag and middleware.
+- **Demo seed data** covering users, categories, products, carts, order history, order lines, stock states, and dashboard activity.
 
-## Technologies Used
+## Stack
 
--   **Backend**: Laravel (PHP framework)
--   **Frontend**: Blade templates, Tailwind CSS, livewire
--   **Database**: MySQL
--   **Payment Gateway**: Stripe
--   **Authentication**: Laravel Breeze
+- PHP 8.5
+- Laravel 13
+- Blade
+- Livewire 4
+- Tailwind CSS 3
+- Alpine.js
+- Vite
+- MySQL
+- Stripe PHP SDK
 
-## Installation
+## Local setup
 
-1. **Clone the repository:**
-    ```sh
-    git clone https://github.com/yourusername/boltify.git
-    cd boltify
-    ```
-2. **Install dependencies:**
-    ```sh
-    composer install
-    npm install
-    ```
-3. **Configure environment:**
-    - Copy `.env.example` to `.env`
-    - Set up database credentials and other configurations
-    ```sh
-    cp .env.example .env
-    php artisan key:generate
-    ```
-4. **Run database migrations:**
-    ```sh
-    php artisan migrate --seed
-    ```
-5. **Serve the application:**
-    ```sh
-    php artisan serve
-    ```
+1. Install dependencies.
 
-## Usage
+   ```sh
+   composer install
+   npm install
+   ```
 
--   Visit `http://localhost:8000` in your browser.
--   Register/Login as a customer to browse and purchase products.
--   Access the admin panel to manage products and orders.
+2. Create the environment file and application key.
 
-## Contributing
+   ```sh
+   cp .env.example .env
+   php artisan key:generate
+   ```
 
-Contributions are welcome! Feel free to fork this repository and submit pull requests.
+3. Configure MySQL and Stripe credentials in `.env`.
 
-## License
+4. Prepare the database, seed the demo store, and create the public storage link.
 
-This project is licensed under the MIT License.
+   ```sh
+   php artisan migrate
+   php artisan db:seed
+   php artisan storage:link
+   ```
 
-# Screenshots
+   For a disposable local database you can rebuild everything in one command:
 
-### Login Page
+   ```sh
+   php artisan migrate:fresh --seed
+   ```
 
-![Login Page](screenshots/login.png)
+5. Start development services.
 
-### Register Page
+   ```sh
+   composer run dev
+   ```
 
-![Register Page](screenshots/register.png)
+6. Open the storefront at `http://127.0.0.1:8000` or the administration workspace at `/admin`.
 
-### Product Page
+## Demo accounts
 
-![Product Page](screenshots/feed.png)
+The seeders create verified accounts so the complete store can be explored without registering first.
 
-### Cart Page
+| Role | Email | Password |
+| --- | --- | --- |
+| Administrator | `admin@boltify.test` | `password` |
+| Customer | `customer@boltify.test` | `password` |
 
-![Cart Page](screenshots/cart.png)
+Additional seeded customer accounts are included to populate purchasing history and admin customer metrics.
 
-### Order History Page
+> The demo credentials are development data only. Do not seed them into a real production store.
 
-![Order History Page](screenshots/history.png)
+## Administration
 
-### Payment Success Page
+The admin area provides an operations dashboard, product and category management, inventory status, order search and filtering, Stripe refunds, and customer purchasing information. Customer accounts cannot access admin routes.
 
-![Payment Success Page](screenshots/checkout-success.png)
+Products may be created without photographs. When no image is available, Boltify uses its technical catalog artwork instead of rendering an empty product card; uploaded product photos automatically replace the fallback artwork.
 
-### Admin Dashboard Page
+## Database notes
 
-![Admin Dashboard Page](screenshots/admin.png)
+The schema uses UUID model keys and composite primary keys for the cart and order junction tables. This keeps fresh installs compatible with managed MySQL services that enforce primary keys on every table, including services such as Aiven.
 
-### Admin Products Page
+## Validation
 
-![Admin Products Page](screenshots/product-admin.png)
+The branch CI validates PHP dependencies, dependency security, fresh migrations with the full demo seed, Blade compilation, Laravel tests, and the production Vite build on PHP 8.5.
+
+## Screenshots
+
+The `screenshots/` directory contains images from the original Boltify build. Some images may not represent the expanded admin workspace and current storefront design.

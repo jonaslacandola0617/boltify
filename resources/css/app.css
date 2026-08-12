@@ -3,22 +3,41 @@
 @tailwind utilities;
 
 @layer base {
+    html { scroll-behavior: smooth; }
+    body {
+        @apply text-zinc-950 antialiased;
+        background: #f4f2ed;
+        font-feature-settings: "ss01" 1, "cv02" 1, "cv03" 1;
+        text-rendering: optimizeLegibility;
+    }
+    ::selection { background: #f97316; color: #18181b; }
     input[type="number"]::-webkit-inner-spin-button,
-    input[type="number"]::-webkit-outer-spin-button {
-        -webkit-appearance: none;
-        margin: 0;
-    }
-
-    * {
-        @apply text-zinc-800 transition-all duration-300;
-    }
-
-    i {
-        @apply stroke-zinc-800;
+    input[type="number"]::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
+    button, a, input, select, textarea { @apply transition-colors duration-200; }
+    button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-visible {
+        outline: 2px solid #f97316;
+        outline-offset: 3px;
     }
 }
 
-.swiper,
-.swiper-container {
-    margin: 0 !important;
+@layer components {
+    .hardware-grid {
+        background-image:
+            linear-gradient(rgba(39, 39, 42, 0.055) 1px, transparent 1px),
+            linear-gradient(90deg, rgba(39, 39, 42, 0.055) 1px, transparent 1px);
+        background-size: 26px 26px;
+    }
+
+    /* Retained for the denser admin/transactional surfaces; the storefront now
+       relies on spacing and rules instead of elevated card chrome. */
+    .hardware-panel {
+        box-shadow: 0 14px 34px rgba(24, 24, 27, 0.045);
+    }
+
+    .hardware-product-visual {
+        isolation: isolate;
+    }
 }
+
+[x-cloak] { display: none !important; }
+.swiper, .swiper-container { margin: 0 !important; }
