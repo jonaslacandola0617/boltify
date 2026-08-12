@@ -40,6 +40,31 @@ Route::get('/', function (Request $request) {
     return view('feed', compact('products','categories','filter','minPrice','maxPrice','sort','search'));
 })->name('feed');
 
+Route::get('/sitemap.xml', function () {
+    $products = Product::query()->select(['id', 'updated_at'])->orderBy('id')->get();
+
+    return response()
+        ->view('sitemap', compact('products'))
+        ->header('Content-Type', 'application/xml; charset=UTF-8');
+})->name('sitemap');
+
+Route::get('/robots.txt', function () {
+    $robots = [
+        'User-agent: *',
+        'Allow: /',
+        'Disallow: /admin',
+        'Disallow: /profile',
+        'Disallow: /checkout',
+        'Disallow: /cart',
+        'Disallow: /order',
+        'Disallow: /login',
+        'Disallow: /register',
+        'Sitemap: '.route('sitemap'),
+    ];
+
+    return response(implode("\n", $robots)."\n", 200, ['Content-Type' => 'text/plain; charset=UTF-8']);
+})->name('robots');
+
 Route::get('/product/{product}', [ProductController::class, 'show'])->name('product.show');
 
 Route::middleware(['auth', 'verified'])->group(function () {
