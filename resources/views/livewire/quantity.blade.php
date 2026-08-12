@@ -1,1 +1,5 @@
-<div class="inline-flex items-center rounded-xl border border-zinc-200 bg-zinc-50 p-1"><button type="button" wire:click="decrement" @disabled($quantity<=1) class="flex h-8 w-8 items-center justify-center rounded-lg text-lg text-zinc-500 hover:bg-white disabled:opacity-40">−</button><span class="min-w-9 text-center text-sm font-semibold">{{ $quantity }}</span><button type="button" wire:click="increment" class="flex h-8 w-8 items-center justify-center rounded-lg text-lg text-zinc-500 hover:bg-white">+</button></div>
+<div class="inline-flex items-center border-y border-zinc-400">
+    <button type="button" wire:click="decrement" @disabled($quantity<=1) class="flex h-9 w-9 items-center justify-center text-lg text-zinc-600 hover:text-orange-600 disabled:opacity-30">−</button>
+    <span class="min-w-10 border-x border-zinc-300 text-center text-sm font-semibold leading-9">{{ $quantity }}</span>
+    <button type="button" wire:click="increment" class="flex h-9 w-9 items-center justify-center text-lg text-zinc-600 hover:text-orange-600">+</button>
+</div>
