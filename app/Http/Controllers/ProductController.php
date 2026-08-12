@@ -34,7 +34,7 @@ class ProductController extends Controller
 
     public function store(Request $request)
     {
-        $validated = $this->validateProduct($request, requireImages: true);
+        $validated = $this->validateProduct($request, requireImages: false);
 
         $images = $this->storeImages($request, $validated['name']);
 
